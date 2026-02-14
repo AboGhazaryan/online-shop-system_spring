@@ -1,9 +1,7 @@
 package com.example.onlineshopsystem_spring.service;
 
 import com.example.onlineshopsystem_spring.model.Product;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.util.List;
 
