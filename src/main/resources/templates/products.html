@@ -15,7 +15,7 @@
 <form method="get" th:action="@{/search/products}">
     <input type="hidden" name="categoryId" th:value="${selectedCategory.id}">
 
-    <input type="search" name="keyword" placeholder="Search by title or Username"
+    <input type="search" name="keyword" placeholder="Search by title"
            th:value="${keyword}">
     <button type='submit'>Search</button>
 </form>
