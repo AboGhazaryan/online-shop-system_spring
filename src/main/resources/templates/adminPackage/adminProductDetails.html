@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Products Details</title>
+</head>
+<body>
+<a th:href="@{/admin/home}">home</a>
+<a th:href="@{/admin/products}">Products</a>
+<table border="1">
+
+    <tr>
+        <th>Id</th>
+        <th>Picture</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Description</th>
+        <th>Created at</th>
+        <th>Category</th>
+        <th>User</th>
+    </tr>
+
+    <tr>
+        <td>
+            <img th:if="${product.getPicName() != null && !product.getPicName().equals('')}"
+                 th:src="@{/image/get(image=${product.getPicName()})}" width="50">
+            <img th:if="${product.getPicName() == null || product.getPicName().equals('')}"
+                 th:src="@{/images/img.png}" width="50">
+        </td>
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.title}"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.description}"></td>
+        <td th:text="${product.createdAt}"></td>
+        <td th:text="${product.category.name}"></td>
+        <td th:text="${product.user.name + '' + product.user.surname}"></td>
+    </tr>
+
+</table>
+<hr>
+
+<h3>Comments</h3>
+
+<div th:if="${#lists.isEmpty(comments)}">
+    <p>No comments yet.</p>
+</div>
+<div th:each="comment : ${comments}">
+
+    <p th:text="${comment.comment}"></p>
+
+    <small>
+        User:
+        <span th:text="${comment.user.name}"></span>
+    </small>
+
+    <form th:action="@{/admin/comment/delete}" method="post">
+        <input type="hidden" name="commentId"
+               th:value="${comment.id}">
+        <input type="hidden" name="productId"
+               th:value="${product.id}">
+        <button type="submit">Delete</button>
+    </form>
+
+    <hr>
+</div>
+
+<h3>Add Comment</h3>
+
+<form th:action="@{/admin/add/comment}" method="post">
+
+    <input type="hidden" name="productId"
+           th:value="${product.id}">
+
+    <textarea name="comment" rows="4" cols="40"
+              placeholder="Write comment..."></textarea>
+
+    <br><br>
+
+    <button type="submit">Add Comment</button>
+
+
+</form>
+</body>
+</html>

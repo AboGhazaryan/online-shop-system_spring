@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product</title>
+</head>
+<body>
+<form th:action="@{/product/change}" th:object="${product}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="id" th:value="${product.id}">
+    Title: <input type="text" name="title" th:value="${product.title}"><br>
+    Price: <input type="text" name="price" th:value="${product.price}"><br>
+    Description: <input type="text" name="description" th:value="${product.description}"><br>
+    <div>
+        <img th:if="${product.getPicName() != null && !product.getPicName().equals('')}"
+             th:src="@{/image/get(image=${product.getPicName()})}" width="50" >
+        <img th:if="${product.getPicName() == null || product.getPicName().equals('')}"
+             th:src="@{/images/img.png}" width="50" >
+    </div>
+    Image: <input type="file" name="image"><br>
+    Category:
+    <select name="*{category.id}">
+        <option th:each="category : ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}"
+                th:selected="${category.id==product.category.id && product.category != null}">
+
+        </option>
+    </select><br>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

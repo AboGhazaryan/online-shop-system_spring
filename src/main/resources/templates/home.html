@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <title>home</title>
+</head>
+<body>
+<span th:if="${#authorization.expression('isAuthenticated()')}">
+<a th:href="@{/categories}">Categories</a><br>
+
+    Welcome
+    <span th:text="${#authentication.principal.user.name}"></span>
+    <span th:text="${#authentication.principal.user.surname}"></span>
+
+    <form action="/logout" method="post" style="display:inline;">
+        <button type="submit">Logout</button>
+    </form>
+</span>
+
+<span th:if="${#authorization.expression('isAnonymous()')}">
+    <a href="/loginPage">Login</a>
+    <a href="/registerPage">Register</a>
+</span>
+
+</body>
+</html>

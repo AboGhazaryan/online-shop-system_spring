@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+</head>
+<body>
+<form action="/product/add" method="post" enctype="multipart/form-data">
+    Title: <input type="text" name="title"><br>
+    Price: <input type="text" name="price"><br>
+    Description: <input type="text" name="description"><br>
+    Image: <input type="file" name="image"><br>
+    Category:
+    <select name="category.id">
+        <option th:each="category : ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}">
+        </option>
+    </select><br>
+
+    User:
+    <select name="user.id">
+        <option th:each="user : ${users}"
+                th:value="${user.id}"
+                th:text="${user.name + ' ' + user.surname}">
+        </option>
+
+    </select><br>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

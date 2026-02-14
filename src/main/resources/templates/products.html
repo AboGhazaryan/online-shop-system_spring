@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+</head>
+<body>
+<a th:href="@{/}">home</a>
+<a th:href="@{/product/add}">Add Products</a>
+
+<h2 th:if="${selectedCategory != null}">
+    Category: <span th:text="${selectedCategory.name}"></span>
+</h2>
+
+<form method="get" th:action="@{/search/products}">
+    <input type="hidden" name="categoryId" th:value="${selectedCategory.id}">
+
+    <input type="search" name="keyword" placeholder="Search by title or Username"
+           th:value="${keyword}">
+    <button type='submit'>Search</button>
+</form>
+<p th:if="${infoMessage}" th:text="${infoMessage}" style="color:gray"></p>
+
+
+<table border="1">
+
+    <tr>
+        <th>Picture</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Category</th>
+        <th>Username</th>
+        <th>Comment</th>
+    </tr>
+
+    <tr th:each="product : ${products}">
+        <td>
+            <img th:if="${product.getPicName() != null && !product.getPicName().equals('')}"
+                 th:src="@{/image/get(image=${product.getPicName()})}" width="50" >
+            <img th:if="${product.getPicName() == null || product.getPicName().equals('')}"
+                 th:src="@{/images/img.png}" width="50" >
+        </td>
+        <td>
+            <a th:href="@{/product/details(productId=${product.id})}"
+               th:text="${product.title}"></a>
+        </td>
+
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.category.name}"></td>
+        <td th:text="${product.user.name}"></td>
+        <td th:text="${product.comments.size()}"></td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>

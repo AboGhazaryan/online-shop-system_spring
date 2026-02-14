@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<a th:href="@{/admin/home}">home</a>
+<a th:href="@{/admin/user/add}">Add User</a>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Role</th>
+        <th>Action</th>
+
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.surname}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.password}"></td>
+        <td th:text="${user.type}"></td>
+        <td>
+            <form th:action="@{/admin/user/delete}" method="post">
+                <input type="hidden" name="userId" th:value="${user.id}">
+                <input type="submit" value="Delete">
+            </form>
+            <a th:href="@{/admin/user/change(userId=${user.id})}">Edit</a>
+        </td>
+
+    </tr>
+</table>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></p>
+<p th:if="${infoMessage}" th:text="${infoMessage}" style="color: grey"></p>
+
+</body>
+</html>

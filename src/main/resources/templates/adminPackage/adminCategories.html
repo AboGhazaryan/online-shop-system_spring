@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+</head>
+<body>
+<a th:href="@{/admin/home}">home</a>
+<a th:href="@{/admin/category/add}">Add Category</a>
+<table border="1">
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Action</th>
+    </tr>
+    <tr th:each="category : ${categories}">
+        <td th:text="${category.id}"></td>
+        <td th:text="${category.name}"></td>
+        <td>
+            <form th:action="@{/admin/category/delete}" method="post">
+                <input type="hidden" name="categoryId" th:value="${category.id}">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+</table>
+<p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></p>
+<p th:if="${infoMessage}" th:text="${infoMessage}" style="color: grey"></p>
+
+</body>
+</html>
