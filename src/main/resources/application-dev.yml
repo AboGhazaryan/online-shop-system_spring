@@ -6,7 +6,6 @@ spring:
    username: ${DB_USERNAME}
    password: ${DB_PASSWORD}
 
-
 product:
   image:
     directory:
