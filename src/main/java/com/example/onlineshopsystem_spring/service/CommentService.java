@@ -11,4 +11,5 @@ public interface CommentService {
     void deleteComment(int commentId, User userId);
 
     List<Comment> findByProductId(Integer productId);
+
 }

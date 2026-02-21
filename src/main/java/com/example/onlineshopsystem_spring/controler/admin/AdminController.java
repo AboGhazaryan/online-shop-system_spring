@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
-    private final UserService userService;
 
     @GetMapping("admin/home")
     public String adminHome(@AuthenticationPrincipal SpringUser springUser, ModelMap modelMap) {

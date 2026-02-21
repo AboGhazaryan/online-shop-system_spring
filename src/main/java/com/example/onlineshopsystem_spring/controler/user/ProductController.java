@@ -134,5 +134,4 @@ public class ProductController {
         return "redirect:/product/details?productId=" + productId;
     }
 
-
 }

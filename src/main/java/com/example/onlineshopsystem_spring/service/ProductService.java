@@ -24,4 +24,5 @@ public interface ProductService {
     List<Product> searchProductAndFilter(String keyword, Integer categoryId);
 
     List<Product> searchProductByCategoryIdAndTitle(Integer categoryId, String keyword);
+
 }

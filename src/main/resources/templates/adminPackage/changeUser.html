@@ -5,7 +5,6 @@
     <title>Edit User</title>
 </head>
 <body>
-
 <form th:action="@{/admin/user/change}" method="POST">
     <input type="hidden" name="id" th:value="${user.id}">
     Name: <input type="text" name="name" th:value="${user.name}"><br>

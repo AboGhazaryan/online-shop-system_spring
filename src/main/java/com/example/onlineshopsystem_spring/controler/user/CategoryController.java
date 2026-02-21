@@ -20,5 +20,4 @@ public class CategoryController {
         modelMap.addAttribute("categories", categories);
         return "categories";
     }
-
 }

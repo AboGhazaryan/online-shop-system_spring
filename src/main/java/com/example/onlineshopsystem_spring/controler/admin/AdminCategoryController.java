@@ -16,6 +16,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class AdminCategoryController {
+
     private final CategoryService categoryService;
 
     @GetMapping("/admin/categories")

@@ -18,7 +18,6 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final ProductRepository productRepository;
 
-
     @Override
     public Comment addComment(String text, int productId, User user) {
         Product product = productRepository.findById(productId)

@@ -137,5 +137,4 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> searchProductByCategoryIdAndTitle(Integer categoryId, String keyword) {
         return productRepository.findByCategoryIdAndTitleStartingWithIgnoreCase(categoryId, keyword);
     }
-
 }
