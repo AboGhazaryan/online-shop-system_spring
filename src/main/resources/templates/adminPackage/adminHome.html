@@ -1,21 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>ADMIN HOME</title>
 </head>
 <body>
-<span th:if="${#authorization.expression('isAuthenticated()')}">
+<th:block th:replace="fragments/headerFragments :: header"></th:block>
 <a th:href="@{/admin/products}">Products</a>
 <a th:href="@{/admin/categories}">Categories</a>
 <a th:href="@{/admin/users}">Users</a><br>
-    Welcome
-    <span th:text="${#authentication.principal.user.name}"></span>
-    <span th:text="${#authentication.principal.user.surname}"></span>
 
-    <form action="/logout" method="post" style="display:inline;">
-        <button type="submit">Logout</button>
-    </form>
-</span>
+
 </body>
 </html>

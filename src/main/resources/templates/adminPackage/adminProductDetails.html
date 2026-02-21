@@ -18,6 +18,7 @@
         <th>Created at</th>
         <th>Category</th>
         <th>User</th>
+        <th>Action</th>
     </tr>
 
     <tr>
@@ -34,6 +35,9 @@
         <td th:text="${product.createdAt}"></td>
         <td th:text="${product.category.name}"></td>
         <td th:text="${product.user.name + ' ' + product.user.surname}"></td>
+        <td>
+            <a th:href="@{/admin/product/change(productId=${product.id})}">Edit</a>
+        </td>
     </tr>
 
 </table>

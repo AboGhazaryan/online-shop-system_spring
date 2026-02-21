@@ -8,11 +8,11 @@
 <span th:if="${msg} != null">
     <span style="color: blue" th:text="${msg}"></span>
 </span>
-Login:
+<span th:text="#{header.login}"></span>
 <form action="/login" method="post">
-    <input type="text" name="username" placeholder="Email"> <br>
-    <input type="password" name="password" placeholder="Password"><br>
-    <input type="submit" value="Login">
+    <input type="text" name="username" th:placeholder="#{main.username}"> <br>
+    <input type="password" name="password" th:placeholder="#{main.password}"><br>
+    <input type="submit" th:value="#{header.login}">
 </form>
 </body>
 </html>

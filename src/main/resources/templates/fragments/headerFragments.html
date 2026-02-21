@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="header">
+    <a href="?lang=en">EN</a> |
+    <a href="?lang=ru">RU</a> |
+    <a href="?lang=hy">HY</a> <br>
+    <span th:if="${user != null}"><span th:text="#{header.welcome}"></span> <span th:text="${user.name + ' ' + user.surname}"></span>
+      <form action="/logout" method="post" style="display:inline;">
+        <button type="submit"><span th:text="#{header.logout}"></span></button>
+    </form>
+
+    </span>
+    <span th:if="${user == null}">
+    <a href="/loginPage"><span th:text="#{header.login}"></span></a>
+    <a href="/registerPage"><span th:text="#{header.register}"></span></a>
+    </span>
+</div>
+
+</body>
+</html>

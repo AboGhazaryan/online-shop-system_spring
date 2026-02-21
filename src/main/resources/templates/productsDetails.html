@@ -5,7 +5,7 @@
     <title>Products Details</title>
 </head>
 <body>
-<a th:href="@{/}">home</a>
+<a th:href="@{/categories}">Categories</a>
 <table border="1">
 
     <tr>
@@ -15,6 +15,7 @@
         <th>Description</th>
         <th>Created at</th>
         <th>Category</th>
+        <th th:if="${product.user.email == SpringUser.email}">Action</th>
     </tr>
 
     <tr>
@@ -29,6 +30,12 @@
         <td th:text="${product.description}"></td>
         <td th:text="${product.createdAt}"></td>
         <td th:text="${product.category.name}"></td>
+        <td th:if="${product.user.email == SpringUser.email}">
+            <a th:href="@{/product/change(productId=${product.id})}">Edit</a>
+            <form th:action="@{/product/delete(productId=${product.id})}" method="post">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
     </tr>
 
 </table>

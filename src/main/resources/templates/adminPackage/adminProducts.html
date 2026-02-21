@@ -17,7 +17,7 @@
         <option th:each="category : ${categories}"
         th:value="${category.id}"
         th:text="${category.name}"
-        th:selected="${category.id == selectedCategory}"></option>">
+        th:selected="${category.id == selectCategory}"></option>">
     </select>
     <button type='submit'>Search</button>
 </form>

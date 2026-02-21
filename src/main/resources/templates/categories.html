@@ -6,6 +6,7 @@
 </head>
 <body>
 <a th:href="@{/}">home</a><br>
+<a th:href="@{/product/add}">Add Products</a>
 <div th:each="category : ${categories}">
     <a th:href="@{/search/products(categoryId=${category.id})}"
        th:text="${category.name}"></a>

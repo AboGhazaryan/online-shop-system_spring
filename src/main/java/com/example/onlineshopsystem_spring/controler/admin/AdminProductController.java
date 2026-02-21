@@ -7,7 +7,10 @@ import com.example.onlineshopsystem_spring.service.CategoryService;
 import com.example.onlineshopsystem_spring.service.CommentService;
 import com.example.onlineshopsystem_spring.service.ProductService;
 import com.example.onlineshopsystem_spring.service.UserService;
+import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +24,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class AdminProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
@@ -28,8 +32,8 @@ public class AdminProductController {
     private final CommentService commentService;
 
     @GetMapping("/admin/products")
-    public String adminProducts(ModelMap modelMap,@RequestParam(required = false)String keyword,
-                                @RequestParam(required = false)Integer categoryId) {
+    public String adminProducts(ModelMap modelMap, @RequestParam(required = false)String keyword,
+                                @RequestParam(required = false)Integer categoryId, @AuthenticationPrincipal SpringUser springUser) {
         List<Product> products;
 
         if(keyword !=null && !keyword.isBlank() && categoryId != null) {
@@ -45,6 +49,7 @@ public class AdminProductController {
             modelMap.addAttribute("infoMessage", "No products Found");
         }
 
+        log.info("quantity of imported goods: {}, currently logged in user: {}",products.size(),springUser.getUser().getName());
         modelMap.addAttribute("products", products);
         modelMap.addAttribute("selectCategory", categoryId);
         modelMap.addAttribute("keyword", keyword);
@@ -62,8 +67,9 @@ public class AdminProductController {
     }
 
     @PostMapping("/admin/product/add")
-    public String addProduct(@ModelAttribute Product product, @RequestParam("image") MultipartFile multipartFile) {
-        productService.save(product,multipartFile);
+    public String addProduct(@ModelAttribute Product product, @RequestParam("image") MultipartFile multipartFile,
+                             @AuthenticationPrincipal SpringUser springUser) {
+        productService.save(product,multipartFile,springUser);
         return "redirect:/admin/products";
     }
 
@@ -79,8 +85,10 @@ public class AdminProductController {
     }
 
     @PostMapping("/admin/product/change")
-    public String changeProduct(@ModelAttribute Product product, @RequestParam(value = "image", required = false) MultipartFile multipartFile) {
-        productService.changeProduct(product,multipartFile);
+    public String changeProduct(@ModelAttribute Product product,
+                                @RequestParam(value = "image", required = false) MultipartFile multipartFile,
+                                @AuthenticationPrincipal SpringUser springUser) {
+        productService.changeProduct(product,multipartFile,springUser);
         return "redirect:/admin/products";
     }
 
@@ -104,8 +112,12 @@ public class AdminProductController {
                              @RequestParam Integer productId, Principal principal) {
 
         User user = userService.findByEmail(principal.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->{
+                    log.error("User not found with email: {}", principal.getName());
+                    return new RuntimeException("User not found ");
+                });
 
+        log.info("this user։ {}, added a comment",user.getName());
         commentService.addComment(comment, productId, user);
 
         return "redirect:/admin/product/details?productId=" + productId;
@@ -117,7 +129,10 @@ public class AdminProductController {
                                 Principal principal) {
 
         User user = userService.findByEmail(principal.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User not found with email: {}", principal.getName());
+                    return new RuntimeException("User not found");
+                });
 
         commentService.deleteComment(commentId, user);
 

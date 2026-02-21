@@ -1,6 +1,7 @@
 package com.example.onlineshopsystem_spring.service;
 
 import com.example.onlineshopsystem_spring.model.Product;
+import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -10,9 +11,9 @@ public interface ProductService {
 
     Product findById(Integer id);
 
-    Product save(Product product, MultipartFile multipartFile);
+    Product save(Product product, MultipartFile multipartFile, SpringUser springUser);
 
-    Product changeProduct(Product product, MultipartFile multipartFile);
+    Product changeProduct(Product product, MultipartFile multipartFile, SpringUser springUser);
 
     void deleteById(Integer id);
 

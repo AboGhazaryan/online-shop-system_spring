@@ -8,7 +8,10 @@ import com.example.onlineshopsystem_spring.service.CategoryService;
 import com.example.onlineshopsystem_spring.service.CommentService;
 import com.example.onlineshopsystem_spring.service.ProductService;
 import com.example.onlineshopsystem_spring.service.UserService;
+import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
@@ -28,9 +32,10 @@ public class ProductController {
     private final UserService userService;
     private final CommentService commentService;
 
+
     @GetMapping("/search/products")
     public String searchProducts(ModelMap modelMap, @RequestParam(required = false) String keyword,
-                                 @RequestParam(required = false) Integer categoryId) {
+                                 @RequestParam(required = false) Integer categoryId, @AuthenticationPrincipal SpringUser springUser) {
         List<Product> products;
 
         if (keyword != null && !keyword.isBlank() && categoryId != null) {
@@ -51,6 +56,7 @@ public class ProductController {
             modelMap.addAttribute("infoMessage", "No products Found");
         }
 
+        log.info("quantity of imported goods: {}, currently logged in user: {}",products.size(),springUser.getUser().getName());
         modelMap.addAttribute("products", products);
         modelMap.addAttribute("keyword", keyword);
 
@@ -60,15 +66,15 @@ public class ProductController {
 
     @GetMapping("/product/add")
     public String addProduct(ModelMap modelMap) {
-        modelMap.addAttribute("categories", categoryService.findAll());
-        modelMap.addAttribute("users", userService.findAll());
+        modelMap.addAttribute("categories",categoryService.findAll());
         return "addProduct";
     }
 
     @PostMapping("/product/add")
-    public String addProduct(@ModelAttribute Product product, @RequestParam("image") MultipartFile multipartFile) {
-        productService.save(product, multipartFile);
-        return "redirect:/products";
+    public String addProduct(@ModelAttribute Product product, @RequestParam("image") MultipartFile multipartFile, @AuthenticationPrincipal SpringUser springUser) {
+        product.setUser(springUser.getUser());
+        productService.save(product, multipartFile,springUser);
+        return "redirect:/categories";
     }
 
 
@@ -89,23 +95,18 @@ public class ProductController {
     @PostMapping("/product/change")
     public String changeProduct(@ModelAttribute Product product,
                                 @RequestParam(value = "image", required = false) MultipartFile multipartFile,
-                                Principal principal) {
-        Product existingProduct = productService.findById(product.getId());
+                                @AuthenticationPrincipal SpringUser springUser) {
 
-        if (!existingProduct.getUser().getEmail().equals(principal.getName())) {
-            throw new RuntimeException("You are not allowed to edit this product");
-        }
-        product.setUser(existingProduct.getUser());
-
-        productService.changeProduct(product, multipartFile);
-        return "redirect:/product/details";
+        productService.changeProduct(product, multipartFile,springUser);
+        return "redirect:/product/details?productId=" + product.getId();
     }
 
 
     @GetMapping("/product/details")
-    public String productDetails(@RequestParam Integer productId, ModelMap modelMap) {
+    public String productDetails(@RequestParam Integer productId, ModelMap modelMap,@AuthenticationPrincipal SpringUser springUser) {
         Product product = productService.findById(productId);
         List<Comment> comments = commentService.findByProductId(productId);
+        modelMap.addAttribute("SpringUser", springUser.getUser());
         modelMap.addAttribute("product", product);
         modelMap.addAttribute("comments", comments);
         return "productsDetails";
@@ -118,7 +119,7 @@ public class ProductController {
             throw new RuntimeException("You are not allowed to delete this product");
         }
         productService.deleteById(productId);
-        return "redirect:/search/products";
+        return "redirect:/search/products?categoryId=" + product.getCategory().getId();
     }
 
     @PostMapping("/add/comment")

@@ -18,7 +18,7 @@
     </div>
     Image: <input type="file" name="image"><br>
     Category:
-    <select name="*{category.id}">
+    <select name="category.id">
         <option th:each="category : ${categories}"
                 th:value="${category.id}"
                 th:text="${category.name}"

@@ -17,15 +17,6 @@
                 th:text="${category.name}">
         </option>
     </select><br>
-
-    User:
-    <select name="user.id">
-        <option th:each="user : ${users}"
-                th:value="${user.id}"
-                th:text="${user.name + ' ' + user.surname}">
-        </option>
-
-    </select><br>
     <input type="submit" value="Submit">
 </form>
 </body>

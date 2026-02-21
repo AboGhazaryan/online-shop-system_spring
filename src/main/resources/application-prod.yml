@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: online-shop-system_spring
+  datasource:
+   url: jdbc:mysql://localhost:3306/online_shop_system
+   username: ${DB_USERNAME}
+   password: ${DB_PASSWORD}
+
+product:
+  image:
+    directory:
+      path: C:\\Users\\Admin\\IdeaProjects\\spring\\online-shop-system_spring\\upload_images\\
+
+logging:
+  file:
+    name: C:\Users\Admin\IdeaProjects\spring\online-shop-system_spring\log\online_log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 2
