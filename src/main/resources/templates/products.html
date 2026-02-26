@@ -11,7 +11,7 @@
 </h2>
 
 <form method="get" th:action="@{/search/products}">
-    <input type="hidden" name="categoryId" th:value="${selectedCategory.id}">
+    <input type="hidden" name="categoryId" th:value="${categoryId}">
 
     <input type="search" name="keyword" placeholder="Search by title"
            th:value="${keyword}">
@@ -47,10 +47,14 @@
         <td th:text="${product.category.name}"></td>
         <td th:text="${product.user.name}"></td>
         <td th:text="${product.comments.size()}"></td>
-
     </tr>
-
 </table>
-
+<div th:if="${products.totalPages > 0}"
+     th:each="pageNumber : ${pageNumbers}">
+    <a th:href="@{/search/products(size=${products.size}, page=${pageNumber}
+       ,categoryId=${categoryId},keyword=${keyword})}"
+       th:text="${pageNumber}"
+       th:class="${pageNumber==products.number + 1} ? active"></a>
+</div>
 </body>
 </html>

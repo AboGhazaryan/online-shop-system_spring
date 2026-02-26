@@ -1,6 +1,5 @@
 package com.example.onlineshopsystem_spring.controler.admin;
 
-import com.example.onlineshopsystem_spring.service.UserService;
 import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

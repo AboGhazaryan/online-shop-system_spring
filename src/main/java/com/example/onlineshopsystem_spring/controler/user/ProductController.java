@@ -11,6 +11,9 @@ import com.example.onlineshopsystem_spring.service.UserService;
 import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Controller
@@ -34,31 +39,50 @@ public class ProductController {
 
 
     @GetMapping("/search/products")
-    public String searchProducts(ModelMap modelMap, @RequestParam(required = false) String keyword,
-                                 @RequestParam(required = false) Integer categoryId, @AuthenticationPrincipal SpringUser springUser) {
-        List<Product> products;
+    public String searchProducts(ModelMap modelMap,
+                                 @RequestParam(required = false) String keyword,
+                                 @RequestParam(required = false) Integer categoryId,
+                                 @RequestParam(required = false) Optional<Integer> page,
+                                 @RequestParam(required = false) Optional<Integer> size,
+                                 @AuthenticationPrincipal SpringUser springUser) {
+
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5);
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+
+        PageRequest pageRequest = PageRequest.of(currentPage - 1, pageSize, sort);
+        Page<Product> products;
 
         if (keyword != null && !keyword.isBlank() && categoryId != null) {
-            products = productService.searchProductByCategoryIdAndTitle(categoryId, keyword);
+            products = productService.searchProductByCategoryIdAndTitle(categoryId, keyword, pageRequest);
 
             Category category = categoryService.findById(categoryId);
             modelMap.addAttribute("selectedCategory", category);
 
         } else if (categoryId != null) {
-            products = productService.findByCategoryId(categoryId);
+            products = productService.findByCategoryId(categoryId, pageRequest);
 
             Category category = categoryService.findById(categoryId);
             modelMap.addAttribute("selectedCategory", category);
         } else {
-            products = productService.findAll();
+            products = productService.findAll(pageRequest);
         }
+
+        int totalPages = products.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed().toList();
+            modelMap.addAttribute("pageNumbers", pageNumbers);
+        }
+
         if (products.isEmpty()) {
             modelMap.addAttribute("infoMessage", "No products Found");
         }
 
-        log.info("quantity of imported goods: {}, currently logged in user: {}",products.size(),springUser.getUser().getName());
+        log.info("quantity of imported goods: {}, currently logged in user: {}", products.getNumberOfElements(), springUser.getUser().getName());
         modelMap.addAttribute("products", products);
         modelMap.addAttribute("keyword", keyword);
+        modelMap.addAttribute("categoryId", categoryId);
 
         return "products";
     }
@@ -66,14 +90,14 @@ public class ProductController {
 
     @GetMapping("/product/add")
     public String addProduct(ModelMap modelMap) {
-        modelMap.addAttribute("categories",categoryService.findAll());
+        modelMap.addAttribute("categories", categoryService.findAll());
         return "addProduct";
     }
 
     @PostMapping("/product/add")
     public String addProduct(@ModelAttribute Product product, @RequestParam("image") MultipartFile multipartFile, @AuthenticationPrincipal SpringUser springUser) {
         product.setUser(springUser.getUser());
-        productService.save(product, multipartFile,springUser);
+        productService.save(product, multipartFile, springUser);
         return "redirect:/categories";
     }
 
@@ -97,13 +121,13 @@ public class ProductController {
                                 @RequestParam(value = "image", required = false) MultipartFile multipartFile,
                                 @AuthenticationPrincipal SpringUser springUser) {
 
-        productService.changeProduct(product, multipartFile,springUser);
+        productService.changeProduct(product, multipartFile, springUser);
         return "redirect:/product/details?productId=" + product.getId();
     }
 
 
     @GetMapping("/product/details")
-    public String productDetails(@RequestParam Integer productId, ModelMap modelMap,@AuthenticationPrincipal SpringUser springUser) {
+    public String productDetails(@RequestParam Integer productId, ModelMap modelMap, @AuthenticationPrincipal SpringUser springUser) {
         Product product = productService.findById(productId);
         List<Comment> comments = commentService.findByProductId(productId);
         modelMap.addAttribute("SpringUser", springUser.getUser());

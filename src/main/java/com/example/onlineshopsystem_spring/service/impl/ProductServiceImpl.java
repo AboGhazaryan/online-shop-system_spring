@@ -7,12 +7,13 @@ import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -24,8 +25,8 @@ public class ProductServiceImpl implements ProductService {
     private String imageDirectoryPath;
 
     @Override
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     @Override
@@ -109,32 +110,32 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findByCategoryId(Integer categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+    public Page<Product> findByCategoryId(Integer categoryId,Pageable pageable) {
+        return productRepository.findByCategoryId(categoryId,pageable);
     }
 
     @Override
-    public List<Product> searchProductsByTitleAndUsername(String keyword) {
-        return productRepository.searchProductByTitleAndUsername(keyword);
+    public Page<Product> searchProductsByTitleAndUsername(String keyword,Pageable pageable) {
+        return productRepository.searchProductByTitleAndUsername(keyword,pageable);
     }
 
     @Override
-    public List<Product> searchProductAndFilter(String keyword, Integer categoryId) {
+    public Page<Product> searchProductAndFilter(String keyword, Integer categoryId,Pageable pageable) {
         if(keyword != null && !keyword.isBlank() && categoryId != null) {
-            return productRepository.searchProductsByKeywordAndCategory(keyword, categoryId);
+            return productRepository.searchProductsByKeywordAndCategory(keyword, categoryId, pageable);
         }
         if (keyword != null && !keyword.isBlank()) {
-            return productRepository.searchProductByTitleAndUsername(keyword);
+            return productRepository.searchProductByTitleAndUsername(keyword, pageable);
         }
 
         if (categoryId != null) {
-            return productRepository.findByCategoryId(categoryId);
+            return productRepository.findByCategoryId(categoryId, pageable);
         }
-        return productRepository.findAll();
+        return productRepository.findAll(pageable);
     }
 
     @Override
-    public List<Product> searchProductByCategoryIdAndTitle(Integer categoryId, String keyword) {
-        return productRepository.findByCategoryIdAndTitleStartingWithIgnoreCase(categoryId, keyword);
+    public Page<Product> searchProductByCategoryIdAndTitle(Integer categoryId, String keyword,Pageable pageable) {
+        return productRepository.findByCategoryIdAndTitleStartingWithIgnoreCase(categoryId, keyword, pageable);
     }
 }

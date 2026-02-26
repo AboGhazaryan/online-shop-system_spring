@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Products</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+
 </head>
 
 <body>
@@ -64,6 +66,12 @@
     </tr>
 
 </table>
+<div th:if="${products.totalPages > 0}" class="pagination"
+     th:each="pageNumber : ${pageNumbers}">
+    <a th:href="@{/admin/products(size=${products.size}, page=${pageNumber})}"
+       th:text="${pageNumber}"
+       th:class="${pageNumber==products.number + 1} ? active"></a>
+</div>
 
 </body>
 </html>

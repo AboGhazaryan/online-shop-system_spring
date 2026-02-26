@@ -22,5 +22,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userService.findByEmail(username)
                 .orElseThrow(()->  new UsernameNotFoundException("User not found with Email: " + username));
         return new SpringUser(user);
+
     }
 }

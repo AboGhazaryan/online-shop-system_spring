@@ -1,11 +1,11 @@
 package com.example.onlineshopsystem_spring.repository;
 
 import com.example.onlineshopsystem_spring.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product,Integer> {
 
@@ -15,9 +15,9 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
             LOWER(p.title) LIKE LOWER(CONCAT(:keyword, '%'))
             OR LOWER(p.user.name) LIKE LOWER(CONCAT(:keyword, '%'))
     """)
-    List<Product> searchProductByTitleAndUsername(@Param("keyword") String keyword);
+    Page<Product> searchProductByTitleAndUsername(@Param("keyword") String keyword,Pageable pageable);
 
-    List<Product> findByCategoryId(Integer categoryId);
+    Page<Product> findByCategoryId(Integer categoryId, Pageable pageable);
 
     @Query("""
         SELECT p FROM Product p
@@ -28,8 +28,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
             )
             AND p.category.id = :categoryId
     """)
-    List<Product> searchProductsByKeywordAndCategory(@Param("keyword") String keyword,
-                                               @Param("categoryId") Integer categoryId);
+    Page<Product> searchProductsByKeywordAndCategory(@Param("keyword") String keyword,
+                                               @Param("categoryId") Integer categoryId,Pageable pageable);
 
-    List<Product>findByCategoryIdAndTitleStartingWithIgnoreCase(Integer categoryId, String keyword);
+    Page<Product>findByCategoryIdAndTitleStartingWithIgnoreCase(Integer categoryId, String keyword,Pageable pageable);
 }

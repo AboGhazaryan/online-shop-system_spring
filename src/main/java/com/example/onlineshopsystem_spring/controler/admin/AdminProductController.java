@@ -10,6 +10,8 @@ import com.example.onlineshopsystem_spring.service.UserService;
 import com.example.onlineshopsystem_spring.service.security.SpringUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,23 +37,38 @@ public class AdminProductController {
 
     @GetMapping("/admin/products")
     public String adminProducts(ModelMap modelMap, @RequestParam(required = false)String keyword,
-                                @RequestParam(required = false)Integer categoryId, @AuthenticationPrincipal SpringUser springUser) {
-        List<Product> products;
+                                @RequestParam(required = false)Integer categoryId,
+                                @RequestParam(required = false) Optional<Integer> page,
+                                @RequestParam(required = false) Optional<Integer> size,
+                                @AuthenticationPrincipal SpringUser springUser) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(5);
+        PageRequest pageRequest = PageRequest.of(currentPage - 1, pageSize);
+        Page<Product> products;
+
 
         if(keyword !=null && !keyword.isBlank() && categoryId != null) {
-            products = productService.searchProductAndFilter(keyword,categoryId);
+            products = productService.searchProductAndFilter(keyword,categoryId,pageRequest);
         }else if(keyword != null && !keyword.isBlank()) {
-            products = productService.searchProductsByTitleAndUsername(keyword);
+            products = productService.searchProductsByTitleAndUsername(keyword,pageRequest);
         }else if(categoryId != null) {
-            products = productService.findByCategoryId(categoryId);
+            products = productService.findByCategoryId(categoryId,pageRequest);
         }else {
-            products = productService.findAll();
+            products = productService.findAll(pageRequest);
         }
+
+        int totalPages = products.getTotalPages();
+        if(totalPages > 0){
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed().toList();
+            modelMap.addAttribute("pageNumbers", pageNumbers);
+        }
+
         if (products.isEmpty()) {
             modelMap.addAttribute("infoMessage", "No products Found");
         }
 
-        log.info("quantity of imported goods: {}, currently logged in user: {}",products.size(),springUser.getUser().getName());
+        log.info("quantity of imported goods: {}, currently logged in user: {}",products.getNumberOfElements(),springUser.getUser().getName());
         modelMap.addAttribute("products", products);
         modelMap.addAttribute("selectCategory", categoryId);
         modelMap.addAttribute("keyword", keyword);
